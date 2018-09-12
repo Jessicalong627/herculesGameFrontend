@@ -4,6 +4,16 @@
   box-sizing: border-box;
 }
 
+h1 {
+  text-align: left;
+  color: red;
+  margin: 100px;
+}
+
+#attempts {
+  font-size: 32;
+}
+
 body {
   height: 100vh;
   display: flex;
@@ -27,7 +37,7 @@ body {
   transform: scale(1);
   transform-style: preserve-3d;
   transition: transform .5s;
-  /* box-shadow: 1px 1px 1px rgba(0,0,0,.3); */
+  /* box-shadow: 1px 1px 1px rgba(0,0,0,.37); */
 }
 
 .memory-card:active {
@@ -36,7 +46,7 @@ body {
 }
 
 .memory-card.flip {
-  transform: rotateY(180deg);
+  transform: rotateY(-180deg);
 }
 
 .front-face,
