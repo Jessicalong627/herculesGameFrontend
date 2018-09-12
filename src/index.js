@@ -45,8 +45,9 @@ let cardArray = []
 let boardLock = false
 let modalContent = document.getElementById('win-lose-modal')
 let matchCounter = 0
-
-
+const winSound = new Audio('./audio/cheering.wav')
+const loseSound = new Audio('./audio/boo.wav')
+const cardFlip = new Audio('./audio/card_flip.mp3')
 
 
 Array.prototype.shuffle = function(){
@@ -76,7 +77,7 @@ function addCardDiv(cardsData){
     cardDiv.dataset.match = 'no-match'
     cardArray.push(cardDiv)
     cardDiv.innerHTML = `<img class="front-face" src="${card.image_url}">
-                         <img class="back-face" src="https://image.tmdb.org/t/p/w300_and_h450_bestv2/ayK0FP2CHrFG8CGDJ1fYgKVa5JP.jpg">`
+                         <img class="back-face" src="${card.back_image}">`
     // memoryGame.append(cardDiv)
     }
     cardArray.shuffle()
@@ -96,7 +97,7 @@ function addCardDiv(cardsData){
     if (this === cardA)
    {return}
     if (!cardA){
-
+      cardFlip.play()
       cardA = this
       this.classList.add('flip')
       // if (cardA.class = 'frontface') {
@@ -104,7 +105,7 @@ function addCardDiv(cardsData){
       // }
 
     }else{
-
+      cardFlip.play()
       cardB = this
         this.classList.add('flip');
     }
@@ -122,8 +123,9 @@ function addCardDiv(cardsData){
     cardB.removeEventListener('click', flipCard)
     matchCounter += 1;
     if (matchCounter === 9){
+      winSound.play()
       modalContent.innerText = 'You are so talented, your mother was right!!'
-    modal.style.display = "block";}
+      modal.style.display = "block";}
 
     cardA = null
     cardB = null
@@ -134,10 +136,12 @@ function matchFailure(){
   setTimeout(() => {
     cardA.classList.remove('flip');
     cardB.classList.remove('flip');
+    cardFlip.play();
     cardA = null
     cardB = null
     attempts.innerText -= 1
     if (attempts.innerText == 0) {
+      loseSound.play()
       modalContent.innerText = 'Out of attempts, click somewhere to play again!'
       modal.style.display = "block";
       // window.location.reload(true);
