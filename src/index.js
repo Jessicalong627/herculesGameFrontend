@@ -1,41 +1,3 @@
-// Get the modal
-var modal = document.getElementById('myModal');
-
-// Get the <span> element that closes the modal
-// var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks on the button, open the modal
-// When the user clicks on <span> (x), close the modal
-// span.onclick = function() {
-//     modal.style.display = "none";
-//     window.location.reload(true);
-// }
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-        window.location.reload(true);
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let cardA;
 let cardB;
 let memoryGame = document.getElementById('memory-game')
@@ -43,33 +5,60 @@ let cards;
 let attempts = document.getElementById('attempts')
 let cardArray = []
 let boardLock = false
+var modal = document.getElementById('myModal');
 let modalContent = document.getElementById('win-lose-modal')
 let matchCounter = 0
 const winSound = new Audio('./audio/cheering.wav')
 const loseSound = new Audio('./audio/boo.wav')
 const cardFlip = new Audio('./audio/card_flip.mp3')
-
+const deckButtons = document.getElementById('deck-buttons')
+let chosenDeck;
 
 Array.prototype.shuffle = function(){
-    var i = this.length, j, temp;
-    while(--i > 0){
-        j = Math.floor(Math.random() * (i+1));
-        temp = this[j];
-        this[j] = this[i];
-        this[i] = temp;
+  var i = this.length, j, temp;
+  while(--i > 0){
+    j = Math.floor(Math.random() * (i+1));
+    temp = this[j];
+    this[j] = this[i];
+    this[i] = temp;
+  }
+}
+
+fetch('http://localhost:3000/api/v1/decks/')
+.then(response => response.json())
+.then(decksData => displayDecks(decksData))
+
+function displayDecks(decksData){
+  decksData.forEach( deck => {
+    let deckButton = document.createElement('button')
+    deckButton.innerHTML = deck.name
+    deckButton.dataset.id = deck.id
+    deckButton.className = 'deck-button'
+    deckButtons.append(deckButton)
+    deckButton.addEventListener('click', function(event){
+    chosenDeck = event.target.dataset.id
+    runCardGame()
+    })
+  })
+}
+
+function runCardGame(){
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+      window.location.reload(true);
     }
 }
 
-
-
-
-
-fetch('http://localhost:3000/api/v1/cards')
+fetch('http://localhost:3000/api/v1/cards/')
 .then(response => response.json())
 .then(cardsData => addCardDiv(cardsData))
 
 function addCardDiv(cardsData){
   cardsData.forEach( card => {
+    console.log(chosenDeck)
+    console.log(card.deck_id)
+    if (chosenDeck == card.deck_id){
     for(let i = 0; i < 2; i++){
     let cardDiv = document.createElement('div')
     cardDiv.className = "memory-card";
@@ -78,11 +67,11 @@ function addCardDiv(cardsData){
     cardArray.push(cardDiv)
     cardDiv.innerHTML = `<img class="front-face" src="${card.image_url}">
                          <img class="back-face" src="${card.back_image}">`
-    // memoryGame.append(cardDiv)
+                       }
+      cardArray.shuffle()
+      cardArray.forEach(heroObj => memoryGame.append(heroObj))
+      addEventListener()
     }
-    cardArray.shuffle()
-    cardArray.forEach(heroObj => memoryGame.append(heroObj))
-    addEventListener()
   })
   }
   function addEventListener(){
@@ -94,20 +83,18 @@ function addCardDiv(cardsData){
     if (boardLock){
       return
     }
-    if (this === cardA)
-   {return}
+    if (this === cardA){
+      return
+    }
     if (!cardA){
       cardFlip.play()
       cardA = this
       this.classList.add('flip')
-      // if (cardA.class = 'frontface') {
-      //   cardA.removeEventListener('click', flipCard)
-      // }
-
-    }else{
+    }
+    else{
       cardFlip.play()
       cardB = this
-        this.classList.add('flip');
+      this.classList.add('flip');
     }
     cardMatch()
   }
@@ -149,4 +136,5 @@ function matchFailure(){
     }
     boardLock = false;
   }, 750);
+ }
 }
