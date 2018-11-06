@@ -18,5 +18,7 @@ A Demo of this project can be found at :
 ## How to use
 ![HomePage](public/memorycardgame.png)
 
+Simply click on a deck theme to display it. Click on a card and attempt to match it with the same card.
+
 
 This project works in correlation with [Memory Matching Card Game Backend](https://github.com/mik3wk/herculesGameBackend)
